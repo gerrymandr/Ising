@@ -110,9 +110,9 @@ if __name__ == '__main__':
 #    party_file="18x18_parties_striped.csv"  # csv file that contains party assignments
 #    party_file="18x18_parties_clustered.csv"  # csv file that contains party assignments
 
-    district_file="/home/hannah/miniconda3/envs/vrdi/n_by_n/18x18_districts_rectangles.csv" # csv file that contains district assignments
-    districtings_outfile="/home/hannah/miniconda3/envs/vrdi/n_by_n/run5_18x18_all_districtings.csv" # csv file that contains the last districting found
-    unique_districtings_outfile="/home/hannah/miniconda3/envs/vrdi/n_by_n/run5_18x18_unique_districtings.csv" # csv file that contains the last districting found
+    district_file="18x18_districts_rectangles.csv" # csv file that contains district assignments
+    districtings_outfile="run5_18x18_all_districtings.csv" # csv file that contains the last districting found
+    unique_districtings_outfile="run5_18x18_unique_districtings.csv" # csv file that contains the last districting found
 
     district_size=n*n / m #number of cells in each district
     G=create_graph_n_by_n(n)

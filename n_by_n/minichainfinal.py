@@ -3,8 +3,8 @@ Modified by Eugene Henninger-Voss, Hannah Wheelen, and Cara Nix
 Jun 19 revisions
 
 A program with two main parts:
-    
-    
+
+
 1: n by n toy examples with m districts where m | n^2
 
 You can run for different scenarios by modifying the variables
@@ -38,6 +38,9 @@ outputs
     e.g., in 18x18 with 6 districts, could be
 
         0,      5, 18, 27, 30, 15, 0,       0, 0, 0.5, 1, 0, 0,     1.5
+
+        Runs the same ensemble against three different distrobutions, outputs
+        one histogram
 
 
 """
@@ -123,8 +126,8 @@ def add_district_edges(Gr,nd,districting1,Gfull):
         for q in list_neighbors:
             if(districting1[nd]==districting1[q]):
                 Gr.add_edge(nd,q)
-                
-                
+
+
 def write_districts():
     num_proposals=100000 # number of proposal steps to try
     n=18 # length/width of grid
@@ -334,7 +337,7 @@ def read_csv_stats(csv_input, name, picture_file):
     newfile.write("Number of 1's: " + str(onect)+"\n")
     newfile.write("Number of 1.5's: " + str(three_halvesct)+"\n")
     newfile.write("Number of 2's: " + str(twoct)+"\n" +"\n")
-    
+
     newfile.close()
     infile.close()
 
