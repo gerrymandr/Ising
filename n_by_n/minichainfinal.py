@@ -1,8 +1,8 @@
 """
 n by n toy examples with m districts where m | n^2
- 
+
 Jan 30 revisions
- 
+
 You can run for different scenarios by modifying the variables
     n                   grid size is n x n
     m                   number of districts
@@ -11,14 +11,14 @@ You can run for different scenarios by modifying the variables
                         the program counts the number of seats won by party 1
     district_file   a csv file that contains the initial district assignment of each cell
     last_district_outfile       csv file that contains the last districting found
- 
- 
+
+
 Based on code by Christy Graves
 Modified by Tommy Ratliff
- 
+
 Code should be fairly easily generalized to work for any graph
 """
- 
+
 import networkx as nx
 import math
 import numpy as np
@@ -27,11 +27,11 @@ import random
 import matplotlib.pyplot as plt # only used for the histogram at the end
 from collections import Counter
 import csv # used for reading initial districting and party assignments files
- 
- 
+
+
 import time #checking for runtime
 start_time = time.time()
- 
+
 def create_graph_n_by_n(n):
     G=nx.Graph()
     for i in range(n**2):
@@ -64,7 +64,7 @@ def create_graph_n_by_n(n):
         if(my_row<(n-1) and my_column<(n-1)):
             G.add_edge(i,southeast)
     return G
- 
+
 #### Used to read Districting and Party Affiliation files
 def read_csv(csv_file, data):
     # Read values from csv_file  into table
@@ -78,19 +78,19 @@ def read_csv(csv_file, data):
     flat_list[0] = flat_list[0].replace('\ufeff', '')
     data = list(map(int, flat_list))
     return data
- 
+
 # Swap districts in district list
 def swap_districts(districting1,r1,r2):
     tmp=districting1[r1]
     districting1[r1]=districting1[r2]
     districting1[r2]=tmp
- 
+
 # Remove all edges connected to vertex nd in graph Gr
 def remove_all_edges(Gr,nd):
     list_neighbors=list(nx.all_neighbors(Gr, nd))
     for q in list_neighbors:
         Gr.remove_edge(nd,q)
- 
+
 # Look at all possible edges to nd in graph Gfull
 # and add those to graph Gr that connect nd to another vertex
 # in the same district based on labeling in districting1
@@ -99,7 +99,7 @@ def add_district_edges(Gr,nd,districting1,Gfull):
         for q in list_neighbors:
             if(districting1[nd]==districting1[q]):
                 Gr.add_edge(nd,q)
- 
+
 if __name__ == '__main__':
     num_proposals=100000 # number of proposal steps to try
     n=18 # length/width of grid
@@ -107,22 +107,22 @@ if __name__ == '__main__':
 #    party_file="18x18_parties_uniform.csv"  # csv file that contains party assignments
 #    party_file="18x18_parties_striped.csv"  # csv file that contains party assignments
 #    party_file="18x18_parties_clustered.csv"  # csv file that contains party assignments
- 
+
     district_file="18x18_districts_rectangles.csv" # csv file that contains district assignments
     districtings_outfile="run5_18x18_all_districtings.csv" # csv file that contains the last districting found
     unique_districtings_outfile="run5_18x18_unique_districtings.csv" # csv file that contains the last districting found
- 
+
     district_size=n*n / m #number of cells in each district
     G=create_graph_n_by_n(n)
     all_edges=list(G.edges())
     num_G_edges=len(all_edges) # number of edges
- 
+
     districtings=[]
     districting=[]
     districting=read_csv(district_file,districting)
     tmp_districting=copy.deepcopy(districting) # Not certain if this is strictly necessary
     districtings.append(tmp_districting)
- 
+
     # G3 is the subgraph of G where edges connect nodes in the same district
     # G3 should have m connected components, one corresponding to each district
     G3=G.copy()
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         b=edge[1]
         if districting[a]!=districting[b]:
             G3.remove_edge(edge[0],edge[1])
- 
+
     for k in range(num_proposals):
         # 'districting' is the current districting plan
         # propose a change to the current districting
@@ -146,7 +146,7 @@ if __name__ == '__main__':
             r_b=edge[1]
             if(districting[r_a]!=districting[r_b]):
                 conflicted_edge_not_found=False
- 
+
         # TR modification:
         # Change the graph G3 directly rather than building from scratch each iteration
         # We want to swap districts for r_a and r_b
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         remove_all_edges(G3,r_b)
         add_district_edges(G3,r_a,districting,G)
         add_district_edges(G3,r_b,districting,G)
- 
+
         # If the new districting is valid, then add it to the list of districtings
         # Otherwise, undo the changes to G3 and revert to previous state
         if(nx.number_connected_components(G3)==m):
@@ -169,14 +169,14 @@ if __name__ == '__main__':
             remove_all_edges(G3,r_b)
             add_district_edges(G3,r_a,districting,G)
             add_district_edges(G3,r_b,districting,G)
- 
+
     # Write all districtings to csv file
     outfile = open(districtings_outfile,"w")
     writer=csv.writer(outfile,delimiter=',',quoting=csv.QUOTE_NONE)
     for j in range(len(districtings)):
         writer.writerow(districtings[j])
     outfile.close()
- 
+
     # Now write out unique districtings
     districtings=sorted(districtings)
     unique_districtings=[]
@@ -186,21 +186,21 @@ if __name__ == '__main__':
             unique_districtings.append(tmp_districting)
     tmp_districting=copy.deepcopy(districtings[j+1]) # Not certain if this is necessary
     unique_districtings.append(tmp_districting)
- 
+
     outfile = open(unique_districtings_outfile,"w")
     writer=csv.writer(outfile,delimiter=',',quoting=csv.QUOTE_NONE)
     for j in range(len(unique_districtings)):
         writer.writerow(unique_districtings[j])
     outfile.close()
- 
+
 #    plt.hist(num_party1_seats) # the histogram it makes is ugly, but you get the idea
     print ("%d districtings found" %len(districtings))
     print ("%d unique districtings found" %len(unique_districtings))
     print("--- %s seconds ---" % (time.time() - start_time)) # Show runtime
     #plt.show()
     #   Just for now
-    
-    
+
+
     #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
@@ -251,7 +251,7 @@ def read_csv(csv_file, data):
     return data
 
 if __name__ == '__main__':
-    districtings_file="run5_18x18_unique_districtings.csv"  
+    districtings_file="run5_18x18_unique_districtings.csv"
 #    districtings_file="toy_districtings.csv"
     parties_file3="18x18_parties_uniform.csv"
     parties_file2="18x18_parties_striped.csv"
@@ -262,7 +262,7 @@ if __name__ == '__main__':
     counts3_outfile = "run5_18x18_unique_uniform_party_counts.csv"
 
 
-def helper_function(input_file,output_file): 
+def helper_function(input_file,output_file):
     parties_file = input_file
     counts_outfile = output_file
     # Read file containing party assignment for each district
@@ -282,7 +282,7 @@ def helper_function(input_file,output_file):
     # Count party 1 seats and write out file
     outfile = open(counts_outfile,"w")
     writer=csv.writer(outfile,delimiter=',',quoting=csv.QUOTE_NONE)
-    
+
     for k in range(len(districtings)):
         party_counts=np.zeros(m,dtype=np.int)
 
@@ -309,10 +309,10 @@ def helper_function(input_file,output_file):
     outfile.close()
 
     print("--- %s seconds ---" % (time.time() - start_time)) # Show runtime
-    
-helper_function(parties_file,counts_outfile) 
-helper_function(parties_file2,counts2_outfile) 
-helper_function(parties_file3,counts3_outfile) 
+
+helper_function(parties_file,counts_outfile)
+helper_function(parties_file2,counts2_outfile)
+helper_function(parties_file3,counts3_outfile)
 
 
 
@@ -322,8 +322,8 @@ open('outputtest.txt', 'w').close()
 
 
 def read_csv_stats(csv_input, name, picture_file):
-    masterlist =[] 
-    zeroct=0 
+    masterlist =[]
+    zeroct=0
     onect=0
     halfct=0
     twoct=0
@@ -338,82 +338,82 @@ def read_csv_stats(csv_input, name, picture_file):
         if col[13] == '0.0\n':
             zeroct=zeroct+1
             masterlist.append(0)
-            
-        if col[13] == '1.0\n': 
-            onect+=1    
+
+        if col[13] == '1.0\n':
+            onect+=1
             masterlist.append(1)
-            
+
         if col[13] == '0.5\n':
-            halfct=halfct+1 
+            halfct=halfct+1
             masterlist.append(.5)
-            
-        if col[13] == '2.0\n': 
+
+        if col[13] == '2.0\n':
             twoct+=1
             masterlist.append(2)
-            
-        if col[13] =='1.5\n': 
+
+        if col[13] =='1.5\n':
             three_halvesct+=1
             masterlist.append(1.5)
-            
-            
-    newfile.write(name +"\n")        
-    newfile.write("Seats  won  by  Party  1" +"\n")       
+
+
+    newfile.write(name +"\n")
+    newfile.write("Seats  won  by  Party  1" +"\n")
     newfile.write("Number of 0's: " + str(zeroct) +"\n")
     newfile.write("Number of .5's: " + str(halfct)+"\n")
     newfile.write("Number of 1's: " + str(onect)+"\n")
     newfile.write("Number of 1.5's: " + str(three_halvesct)+"\n")
     newfile.write("Number of 2's: " + str(twoct)+"\n" +"\n")
-   
-    fig = plt.figure()
-    x = masterlist
-    num_bins = 5
-    #plt.xlim([min(masterlist)-0.5, max(masterlist)+0.5])
-    #plt.hist(masterlist, bins=5, alpha=0.5)
-
-
-    #n, bins =
-    n, bins, pathces = plt.hist(x, num_bins, facecolor='blue')
-    plt.title('Green Wins')
-    plt.xlabel('Seats')
-    plt.ylabel('Frequency')
-   # print("n = ")
-    #print(n)
-    fig.savefig(picture_file)
- 
-    newfile.close() 
-    infile.close() 
     
-   
-            
-   
-    
-read_csv_stats(counts_outfile, "Clustered", "clustered.png")
-#read_csv_stats('run5_18x18_unique_clustered_party_counts.csv')  
-read_csv_stats(counts2_outfile,"Striped", "striped.png" )
-read_csv_stats(counts3_outfile, "Uniform", "uniform.png")
+    newfile.close()
+    infile.close()
+
+
+    return masterlist
 
 
 
 
- 
-  
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        
-            
-            
-        
+results_clustered = read_csv_stats(counts_outfile, "Clustered", "clustered.png")
+#read_csv_stats('run5_18x18_unique_clustered_party_counts.csv')
+results_striped = read_csv_stats(counts2_outfile,"Striped", "striped.png" )
+results_uniform = read_csv_stats(counts3_outfile, "Uniform", "uniform.png")
 
-    
-    
+fig = plt.figure()
+x = [results_clustered, results_striped, results_uniform]
+num_bins = [0,.5,1,1.5,2,2.5]
+#plt.xlim([min(masterlist)-0.5, max(masterlist)+0.5])
+#plt.hist(masterlist, bins=5, alpha=0.5)
+
+
+#n, bins =
+n, bins, pathces = plt.hist(x, num_bins)
+plt.title('Green Wins')
+plt.xlabel('Seats')
+plt.ylabel('Frequency')
+print("n = ")
+print(n)
+plt.show()
+fig.savefig("combined_hist.png")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     #
