@@ -1,7 +1,11 @@
 """
-n by n toy examples with m districts where m | n^2
+Modified by Eugene Henninger-Voss, Hannah Wheelen, and Cara Nix
+Jun 19 revisions
 
-Jan 30 revisions
+A program with two main parts:
+    
+    
+1: n by n toy examples with m districts where m | n^2
 
 You can run for different scenarios by modifying the variables
     n                   grid size is n x n
@@ -13,11 +17,31 @@ You can run for different scenarios by modifying the variables
     last_district_outfile       csv file that contains the last districting found
 
 
-Based on code by Christy Graves
-Modified by Tommy Ratliff
+Based on code by Christy Graves which was modified by Tommy Ratliff
 
 Code should be fairly easily generalized to work for any graph
+
+
+2: Takes in csvs of results and creates summary stats and histogram
+    reads the files written in part one as inputs
+
+Reads
+    *_parties_*.csv     contains distribution of party1 in grid
+    *_districtings.csv  contains districtings, one per row
+
+outputs
+
+    outfile.csv containing one row per districting of form
+
+        District #, District party1 totals, District party 1 seats, Total party 1 seats
+
+    e.g., in 18x18 with 6 districts, could be
+
+        0,      5, 18, 27, 30, 15, 0,       0, 0, 0.5, 1, 0, 0,     1.5
+
+
 """
+
 
 import networkx as nx
 import math
@@ -25,9 +49,9 @@ import numpy as np
 import copy
 import random
 import matplotlib.pyplot as plt # only used for the histogram at the end
+import matplotlib.mlab as mlab
 from collections import Counter
 import csv # used for reading initial districting and party assignments files
-
 
 import time #checking for runtime
 start_time = time.time()
@@ -99,8 +123,9 @@ def add_district_edges(Gr,nd,districting1,Gfull):
         for q in list_neighbors:
             if(districting1[nd]==districting1[q]):
                 Gr.add_edge(nd,q)
-
-if __name__ == '__main__':
+                
+                
+def write_districts():
     num_proposals=100000 # number of proposal steps to try
     n=18 # length/width of grid
     m=6 # number of districts
@@ -203,38 +228,6 @@ if __name__ == '__main__':
 
     #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""
-party1_districting_counts.py
-
-Reads
-    *_parties_*.csv     contains distribution of party1 in grid
-    *_districtings.csv  contains districtings, one per row
-
-outputs
-
-    outfile.csv containing one row per districting of form
-
-        District #, District party1 totals, District party 1 seats, Total party 1 seats
-
-    e.g., in 18x18 with 6 districts, could be
-
-        0,      5, 18, 27, 30, 15, 0,       0, 0, 0.5, 1, 0, 0,     1.5
-
-
-"""
-
-import math
-import numpy as np
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-import copy
-import random
-from collections import Counter
-import csv # used for reading initial districting and party assignments files
-
-
-import time #checking for runtime
-start_time = time.time()
 
 #### Used to read *_parties_*.csv file
 def read_csv(csv_file, data):
@@ -249,17 +242,6 @@ def read_csv(csv_file, data):
     flat_list[0] = flat_list[0].replace('\ufeff', '')
     data = list(map(int, flat_list))
     return data
-
-if __name__ == '__main__':
-    districtings_file="run5_18x18_unique_districtings.csv"
-#    districtings_file="toy_districtings.csv"
-    parties_file3="18x18_parties_uniform.csv"
-    parties_file2="18x18_parties_striped.csv"
-    parties_file="18x18_parties_clustered.csv"
-
-    counts_outfile="run5_18x18_unique_clustered_party_counts.csv"
-    counts2_outfile= "run5_18x18_unique_striped_party_counts.csv"
-    counts3_outfile = "run5_18x18_unique_uniform_party_counts.csv"
 
 
 def helper_function(input_file,output_file):
@@ -309,17 +291,6 @@ def helper_function(input_file,output_file):
     outfile.close()
 
     print("--- %s seconds ---" % (time.time() - start_time)) # Show runtime
-
-helper_function(parties_file,counts_outfile)
-helper_function(parties_file2,counts2_outfile)
-helper_function(parties_file3,counts3_outfile)
-
-
-
-open('outputtest.txt', 'w').close()
-
-
-
 
 def read_csv_stats(csv_input, name, picture_file):
     masterlist =[]
@@ -371,7 +342,23 @@ def read_csv_stats(csv_input, name, picture_file):
     return masterlist
 
 
+write_districts()
 
+districtings_file="run5_18x18_unique_districtings.csv"
+#districtings_file="toy_districtings.csv"
+parties_file3="18x18_parties_uniform.csv"
+parties_file2="18x18_parties_striped.csv"
+parties_file="18x18_parties_clustered.csv"
+
+counts_outfile="run5_18x18_unique_clustered_party_counts.csv"
+counts2_outfile= "run5_18x18_unique_striped_party_counts.csv"
+counts3_outfile = "run5_18x18_unique_uniform_party_counts.csv"
+
+helper_function(parties_file,counts_outfile)
+helper_function(parties_file2,counts2_outfile)
+helper_function(parties_file3,counts3_outfile)
+
+open('outputtest.txt', 'w').close()
 
 results_clustered = read_csv_stats(counts_outfile, "Clustered", "clustered.png")
 #read_csv_stats('run5_18x18_unique_clustered_party_counts.csv')
