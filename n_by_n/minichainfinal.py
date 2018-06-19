@@ -1,7 +1,7 @@
 """
 n by n toy examples with m districts where m | n^2
 
-Jan 30 revisions
+June 19 Revisions
 
 You can run for different scenarios by modifying the variables
     n                   grid size is n x n
@@ -15,8 +15,29 @@ You can run for different scenarios by modifying the variables
 
 Based on code by Christy Graves
 Modified by Tommy Ratliff
+Combined into one module at VRDI
 
 Code should be fairly easily generalized to work for any graph
+party1_districting_counts.py
+
+Reads
+    *_parties_*.csv     contains distribution of party1 in grid
+    *_districtings.csv  contains districtings, one per row
+
+outputs
+
+    outfile.csv containing one row per districting of form
+
+        District #, District party1 totals, District party 1 seats, Total party 1 seats
+
+    e.g., in 18x18 with 6 districts, could be
+
+        0,      5, 18, 27, 30, 15, 0,       0, 0, 0.5, 1, 0, 0,     1.5
+        
+        Runs the same ensemble against three different distrobutions, outputs
+        one histogram
+        
+
 """
 
 import networkx as nx
@@ -25,9 +46,9 @@ import numpy as np
 import copy
 import random
 import matplotlib.pyplot as plt # only used for the histogram at the end
+import matplotlib.mlab as mlab
 from collections import Counter
 import csv # used for reading initial districting and party assignments files
-
 
 import time #checking for runtime
 start_time = time.time()
@@ -203,38 +224,8 @@ if __name__ == '__main__':
 
     #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""
-party1_districting_counts.py
 
-Reads
-    *_parties_*.csv     contains distribution of party1 in grid
-    *_districtings.csv  contains districtings, one per row
-
-outputs
-
-    outfile.csv containing one row per districting of form
-
-        District #, District party1 totals, District party 1 seats, Total party 1 seats
-
-    e.g., in 18x18 with 6 districts, could be
-
-        0,      5, 18, 27, 30, 15, 0,       0, 0, 0.5, 1, 0, 0,     1.5
-
-
-"""
-
-import math
-import numpy as np
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-import copy
-import random
-from collections import Counter
-import csv # used for reading initial districting and party assignments files
-
-
-import time #checking for runtime
-start_time = time.time()
+#Now this part compares the ensemble to distrobutions of green/red voters
 
 #### Used to read *_parties_*.csv file
 def read_csv(csv_file, data):
