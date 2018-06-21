@@ -6,7 +6,7 @@ Created on Tue Jun 19 20:15:48 2018
 @author: caranix
 """
 
-file_to_check = "test18by18.csv"
+file_to_check = "run5_18x18_unique_districtings.csv"
 file_to_write_to = "output_matrix.csv" 
 
 # Every line in the file represents one map, so split each line and sum the 
@@ -15,9 +15,10 @@ file_to_write_to = "output_matrix.csv"
 file = open(file_to_check, 'r')
 ofile= open(file_to_write_to, 'w')
 for line in file: #list as csv
+    values = line.split(',')
     for j in range(0,323,18):
         #print(list(range(0,343,18)))
-        ofile.write( line[j: j+36] + '\n')    
+        ofile.write( ','.join(values[j: j+18]) + '\n')    
 ofile.close() 
 file.close()
     
