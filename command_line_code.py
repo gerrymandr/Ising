@@ -8,11 +8,11 @@ Created on Thu Jun 21 11:25:20 2018
 
 import argparse
 
-parser = argparse.ArguementParser(description="Grid ising and districting model")
-parser.add_arguement('-g', '--grid_size', default=18, type=int,
+parser = argparse.ArgumentParser(description="Grid ising and districting model")
+parser.add_argument('-g', '--grid_size', default=18, type=int,
     help='Side length of the grid.  It will be a g x g grid (default: %(default)s)'
  )
-parser.add_arguement('-d', '--num_districts', default=6, type=int,
+parser.add_argument('-d', '--num_districts', default=6, type=int,
     help='Number of districts (default: %(default)s)'
 )
 parser.add_argument('-e', '--ensemble_size', default=10000, type=int,
@@ -29,4 +29,6 @@ parser.add_argument('-q', '--queen_adjacency', action='store_const',
     help="Choose to use queen adjacency over rook (default: %(default)s)"
 )
 
-args = vars(parser.parse_args())
+# args = vars(parser.parse_args())
+args = vars(parser.parse_args('-g 16 -d 8 -m .9'.split(' ')))
+print(args)
