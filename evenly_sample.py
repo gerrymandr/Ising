@@ -96,13 +96,13 @@ def evenly_sample():
     # Calculate how many sample distribution to take
     e_min = E
     e_max = 0
-    e_period = 10
+    e_period = 16
     num_e_bins = math.floor( - e_min / e_period)
     
     filled = [False] * num_e_bins 
     configs = [None] * num_e_bins
     energies = [None] * num_e_bins
-    for j in range(100000):
+    for j in range(1000000):
         metropolis_update(B, n, t)
         curr_e_bin = math.floor(- E / e_period)
         if not filled[curr_e_bin - 1]:
@@ -120,4 +120,4 @@ E = None
 
 evenly_sample()
 
-
+B = gen_board(m, p)
