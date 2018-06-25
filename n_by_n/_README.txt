@@ -51,4 +51,4 @@ Does Markov chain on the input files, which are distribution of minority plans:
 
 
 matrix_maker.py 
-File that contains code. That will turn each row from the output file of minichainfinal.py into an 18by18 matrix.
+File that contains code that will turn each row from the output file of minichainfinal.py into an 18by18 matrix.
