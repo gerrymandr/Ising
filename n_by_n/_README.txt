@@ -43,4 +43,12 @@ Auxiliary spreadsheet used to build the csv files for the districting seed and P
 18x18_districts_final,pdf
 For purely informational purposes, this shows the last districting plan generated in one of the random walks from _n_by_n_v1. 
 
+minichainfinal.py 
+Does Markov chain on the input files, which are distribution of minority plans: 
+18x18_parties_clustered.csv
+18x18_parties_striped.csv
+18x18_parties_uniform.csv
 
+
+matrix_maker.py 
+File that contains code. That will turn each row from the output file of minichainfinal.py into an 18by18 matrix.
