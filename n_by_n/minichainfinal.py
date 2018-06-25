@@ -132,13 +132,13 @@ def write_districts():
     num_proposals=100000 # number of proposal steps to try
     n=18 # length/width of grid
     m=6 # number of districts
-#    party_file="18x18_parties_uniform.csv"  # csv file that contains party assignments
+#    party_file="18x18_parties_uniform.csv"  # csv file that contains party assignments 
 #    party_file="18x18_parties_striped.csv"  # csv file that contains party assignments
 #    party_file="18x18_parties_clustered.csv"  # csv file that contains party assignments
 
     district_file="18x18_districts_rectangles.csv" # csv file that contains district assignments
-    districtings_outfile="run5_18x18_all_districtings.csv" # csv file that contains the last districting found
-    unique_districtings_outfile="run5_18x18_unique_districtings.csv" # csv file that contains the last districting found
+    districtings_outfile="run5_18x18_all_districtings.csv" # csv file created after run where each row is a districting plan 
+    unique_districtings_outfile="run5_18x18_unique_districtings.csv" # csv file created after run where each row is a unique districting plan 
 
     district_size=n*n / m #number of cells in each district
     G=create_graph_n_by_n(n)
@@ -295,6 +295,7 @@ def helper_function(input_file,output_file):
 
     print("--- %s seconds ---" % (time.time() - start_time)) # Show runtime
 
+#function counting the seat shares from the outfile and exporting the counts to a text file for clustered, uniform and striped. 
 def read_csv_stats(csv_input, name, picture_file):
     masterlist =[]
     zeroct=0
@@ -302,13 +303,10 @@ def read_csv_stats(csv_input, name, picture_file):
     halfct=0
     twoct=0
     three_halvesct=0
-    newfile = open ('outputtest.txt', 'a')
+    newfile = open ('seatsharecounts.txt', 'a')
     infile = open(csv_input, 'r')
     for line in infile.readlines():
-        #print(line)
-
         col= line.split (',')
-        #print(col)
         if col[13] == '0.0\n':
             zeroct=zeroct+1
             masterlist.append(0)
@@ -347,12 +345,13 @@ def read_csv_stats(csv_input, name, picture_file):
 
 write_districts()
 
+#files taken in 
 districtings_file="run5_18x18_unique_districtings.csv"
-#districtings_file="toy_districtings.csv"
 parties_file3="18x18_parties_uniform.csv"
 parties_file2="18x18_parties_striped.csv"
-parties_file="18x18_parties_clustered.csv"
+parties_file="18x18_parties_clustered.csv" 
 
+#output files 
 counts_outfile="run5_18x18_unique_clustered_party_counts.csv"
 counts2_outfile= "run5_18x18_unique_striped_party_counts.csv"
 counts3_outfile = "run5_18x18_unique_uniform_party_counts.csv"
@@ -364,18 +363,15 @@ helper_function(parties_file3,counts3_outfile)
 open('outputtest.txt', 'w').close()
 
 results_clustered = read_csv_stats(counts_outfile, "Clustered", "clustered.png")
-#read_csv_stats('run5_18x18_unique_clustered_party_counts.csv')
 results_striped = read_csv_stats(counts2_outfile,"Striped", "striped.png" )
 results_uniform = read_csv_stats(counts3_outfile, "Uniform", "uniform.png")
 
+
+#Make histogram 
 fig = plt.figure()
 x = [results_clustered, results_striped, results_uniform]
 num_bins = [0,.5,1,1.5,2,2.5]
-#plt.xlim([min(masterlist)-0.5, max(masterlist)+0.5])
-#plt.hist(masterlist, bins=5, alpha=0.5)
 
-
-#n, bins =
 n, bins, pathces = plt.hist(x, num_bins)
 plt.title('Green Wins')
 plt.xlabel('Seats')
