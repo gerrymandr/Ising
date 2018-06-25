@@ -4,6 +4,9 @@
 Created on Tue Jun 19 20:15:48 2018
 
 @author: caranix
+
+Used after running minichainfinal.py in order to take each districting plan
+and reshape eachrow into 18by18. This becomes input for "Cleaned up Ising Playground" (ask Marshall) 
 """
 
 file_to_check = "run5_18x18_unique_districtings.csv"
@@ -23,9 +26,3 @@ ofile.close()
 file.close()
     
 
-
-#range(0,343,18)
-#for j in range(1,16,4)
-#j, j+4 
-#print ns[j-1,j+3]
-    
