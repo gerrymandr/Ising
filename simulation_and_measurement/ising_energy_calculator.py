@@ -2,30 +2,54 @@ from abc import ABC, abstractmethod
 import math
 
 class IsingEnergyCalculator(ABC):
+    
+    """Base class from which all energy calculators are built.
+    Several possible energy types have calculators implemented below.
+    
+    Attributes
+    ----------
+    simulation : IsingSimulation
+        simulation for which energy is being computed
+    grid_size : int
+        size of simulation grid
+    """
+    
     def __init__(self, ising_simulation):
         self.simulation = ising_simulation
         self.grid_size = ising_simulation.grid_size
     
     @abstractmethod
     def get_energy_diff_from_swap(self, v_minority, v_majority):
-        # get the energy change that results from swapping vertices
-        # assuming that they have opposite spins
+        """Get the energy change that results from swapping vertices.
+        (assuming that they have opposite spins and are not adjacent)
+        """
         pass
     
     @abstractmethod
     def get_total_energy():
-        # get the energy of the entire configuration
+        """Get the energy of the entire configuration."""
         pass
     
     @abstractmethod
     def get_energy_scale_factor():
-        # rescaling coefficient so that energy scales linearly with edge count
+        """Get rescaling factor so that energy scales linearly with edge count.
+        This is used to prevent one from having to adjust the simulation
+        temperature for every minority proportion and grid size.
+        """
         pass
 
 class HamiltonianEnergyCalculator(IsingEnergyCalculator):
+    
+    """Energy Calculator for the Ising model Hamiltonian
+    H(config) = # edges between opposite spin vertices -
+                # edges between same spin vertices
+    low H -> high clustering
+    high H -> low clustering
+    """
+    
     def get_energy_contribution(self, x):
-        # get the energy contribution of edges connected to vertex x = (i, j),
-        # according to Ising model Hamiltonian
+        """Get the energy contribution of edges connected to vertex x = (i, j).
+        """
         i = x[0]
         j = x[1]
         up    = self.simulation.config[i-1, j] if (i > 0) else 0
@@ -36,15 +60,15 @@ class HamiltonianEnergyCalculator(IsingEnergyCalculator):
         return -self.simulation.config[i, j] * sum_of_neighbors
     
     def get_energy_diff_from_swap(self, v_minority, v_majority):
-        # get the energy change that results from swapping vertices
-        # assuming that they have opposite spins
+        """Get the energy change that results from swapping vertices.
+        (assuming that they have opposite spins and aren't adjacent)
+        """
         E_m = self.get_energy_contribution(v_minority)
         E_M = self.get_energy_contribution(v_majority)
         return -2 * (E_m + E_M)
     
     def get_total_energy(self):
-        # get the energy of the entire configuration,
-        # according to Ising model Hamiltonian
+        """Get the energy of the entire configuration."""
         E = 0
         for i in range(self.grid_size):
             for j in range(self.grid_size):
@@ -57,8 +81,16 @@ class HamiltonianEnergyCalculator(IsingEnergyCalculator):
         return 1
     
 class GammaEnergyCalculator(IsingEnergyCalculator):
+    
+    """Energy Calculator for our self-named Gamma Energy
+    Gamma(config) = # edges between minority (-1 spin) vertices
+    low G -> low minority clustering
+    high G -> high minority clustering
+    """
+    
     def get_num_minority_neighbors(self, x):
-        # get the number of minority (spin -1) neighbors of vertex x
+        """Get the number of minority (spin -1) neighbors of vertex x = (i, j).
+        """
         i = x[0]
         j = x[1]
         up    = self.simulation.config[i-1, j] if (i > 0) else 0
@@ -72,16 +104,15 @@ class GammaEnergyCalculator(IsingEnergyCalculator):
         return num_minority_neighbors
     
     def get_energy_diff_from_swap(self, v_minority, v_majority):
-        # get the energy change that results from swapping vertices
-        # assuming that they have opposite spins
+        """Get the energy change that results from swapping vertices.
+        (assuming that they have opposite spins and aren't adjacent)
+        """
         n_m = self.get_num_minority_neighbors(v_minority)
         n_M = self.get_num_minority_neighbors(v_majority)
         return n_M - n_m
     
     def get_total_energy(self):
-        # get the energy of the entire configuration,
-        # according to gamma energy
-        # w/ gamma(system) = # edges b/t minority vertices
+        """Get the energy of the entire configuration."""
         E = 0
         for i in range(self.grid_size):
             for j in range(self.grid_size):
@@ -96,20 +127,33 @@ class GammaEnergyCalculator(IsingEnergyCalculator):
         return 1
     
 class NormalizedGammaEnergyCalculator(GammaEnergyCalculator):
+    
+    """Energy Calculator for a normalized variant of Gamma Energy
+    Gamma*(config) = # edges between minority (-1 spin) vertices /
+                     ~ max # possible for given minority count and grid size 
+    G ~ 0 -> low minority clustering
+    G ~ 1 -> high minority clustering
+    """
+    
     def __init__(self, ising_simulation):
         super().__init__(ising_simulation)
-        square_size = \
-            math.ceil(math.sqrt(ising_simulation.num_minority_vertices))
-        self.max_gamma = 2  * square_size * (square_size - 1)
+        # our maximum assumes all of the minority vertices are in a square, so
+        # this is slight overestimate when minority count isn't perfect square
+        self.max_gamma = 2 * math.sqrt(ising_simulation.num_minority_vertices)\
+            * (math.sqrt(ising_simulation.num_minority_vertices) - 1)
         
     def get_energy_diff_from_swap(self, v_minority, v_majority):
+        """Get the energy change that results from swapping vertices.
+        (assuming that they have opposite spins and aren't adjacent)
+        """
         dE = super().get_energy_diff_from_swap(v_minority, v_majority)
         return dE  / self.max_gamma
     
     def get_total_energy(self):
+        """Get the energy of the entire configuration."""
         return super().get_total_energy() / self.max_gamma
     
     def get_energy_scale_factor(self):
-        # undo normalization to scale linearly with edge count
+        """Undo normalization to scale linearly with edge count."""
         return self.max_gamma
     
