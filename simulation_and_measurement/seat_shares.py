@@ -13,7 +13,7 @@ def get_minority_seat_share(config, districting):
     Returns
     -------
     seats : int
-        number of districts in which minority voters have a majority           
+        # of districts in which minority voters have a majority           
     """
     num_districts = int(max(districting)) + 1
     seats = 0
