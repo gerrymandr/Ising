@@ -27,7 +27,7 @@ def generate_animation(x_info, y_info, t_info, comparison_line_info,
             'get_points': lambda t: [[0, 1, 2], [3, 4, 5]],
             'label': 'Comparison Line'
         }
-    best_fit_line_infon : dict | None
+    best_fit_line_info : dict | None
         get_points(displayed_points_x, displayed_points_y) function and label
         for optional best fit line, e.g.
         {
@@ -131,7 +131,7 @@ def get_coordinate_info_from_data_tuples(data):
     
     p_info = {'values': proportions, 'label': 'Minority Proportion'}
     e_info = {'values': energies, 'label': 'Energy'}
-    s_info = {'values': seats, 'label': 'Expected Number of Seats Won'}
+    s_info = {'values': seats, 'label': 'Expected # Seats Won'}
     return (p_info, e_info, s_info)
 
 def generate_energy_seats_curve_animation(data, num_districts,
@@ -144,7 +144,7 @@ def generate_energy_seats_curve_animation(data, num_districts,
     data : list<(Ising config, minority proportion, energy, expected seats)>
         list of data points representing individual configurations
     num_districts : int
-        number of districts used for expected seats calculation
+        # of districts used for expected seats calculation
     energy_limits : [upper, lower]
         bounds on energy (x) axis for plot
     expected_seats_limits : [lower, upper]
@@ -195,7 +195,7 @@ def generate_votes_seats_curve_animation(data, num_districts,
     data : list<(Ising config, minority proportion, energy, expected seats)>
         list of data points representing individual configurations
     num_districts : int
-        number of districts used for expected seats calculation
+        # of districts used for expected seats calculation
     minority_proportion_limits : [lower, upper]
         bounds on minority proportion (x) axis for plot
     expected_seats_limits : [lower, upper]
@@ -206,7 +206,7 @@ def generate_votes_seats_curve_animation(data, num_districts,
         specify the level with which to inflate the cross sections in the
         energy axis, necessary so that they contain multiple points
     num_frames : int
-        number of frames in animation
+        # of frames in animation
     duration : float
         duration of the animation, in seconds
     outfile : str | None
@@ -237,7 +237,7 @@ def generate_votes_seats_curve_animation(data, num_districts,
         'label': 'Proportional Representation'
     }
     
-    # naive best fit line which takes the average seat share at each
+    # naive best fit line which takes the average seat share at each district
     # minority proportion level
     def get_best_fit_line_points(p, s):
         unique_proportions = list(sorted(set(p)))
@@ -257,6 +257,6 @@ def generate_votes_seats_curve_animation(data, num_districts,
                               'Votes-Seats Curves at Varied Energy Levels',
                               duration, outfile)
 
-anim = generate_energy_seats_curve_animation(points2, 6, [0, 1], [0, 4], 10.0) 
-#anim = generate_votes_seats_curve_animation(points2, 6, [0, 0.5], [0, 3.5],
-#                                            [0, 1], 0.05, 100, 5.0)
+#anim = generate_energy_seats_curve_animation(points2, 6, [0, 1], [0, 4], 10.0) 
+anim = generate_votes_seats_curve_animation(points2, 6, [0, 0.5], [0, 3.5],
+                                            [0, 1], 0.05, 100, 5.0)
