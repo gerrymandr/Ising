@@ -69,7 +69,7 @@ class IsingSimulation:
         n^2*p random nodes are assigned to -1 and the rest to 1.
         """
         C = np.ones(self.num_vertices)
-        C[1:self.num_minority_vertices] = -1
+        C[0:self.num_minority_vertices] = -1
         np.random.shuffle(C)
         self.config = C.reshape((self.grid_size, self.grid_size))
         self.energy = self.energy_calculator.get_total_energy()
@@ -165,6 +165,13 @@ def generate_voter_configurations_with_energies(
         # of configurations to sample for each target energy
     num_iterations_between_samples : int
         # of interations to run between samples for each target energy
+        
+    Returns
+    -------
+    configs : list<numpy.array<{-1,1}> (grid_size x grid_size)>
+        list of generated voter configurations
+    energies : list<float>
+        list of corresponding energies, according to energy type
     """
     simulation = IsingSimulation(grid_size,
                                  minority_proportion,

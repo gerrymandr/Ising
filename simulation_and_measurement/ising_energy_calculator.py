@@ -156,4 +156,52 @@ class NormalizedGammaEnergyCalculator(GammaEnergyCalculator):
     def get_energy_scale_factor(self):
         """Undo normalization to scale linearly with edge count."""
         return self.max_gamma
+ 
+'''
+class ConnectionProbabilityEnergyCalculator(IsingEnergyCalculator):
+        
+    """Energy Calculator for our self-named Gamma Energy
+    CP(config) = # minority-minority edges / (total # minority edges)
+    low CP -> low minority clustering
+    high CP -> high minority clustering
+    """
     
+    def get_neighbor_classifications(self, x):
+        """Get the number of minority and majority neighbors
+        """
+        i = x[0]
+        j = x[1]
+        up    = self.simulation.config[i-1, j] if (i > 0) else 0
+        down  = self.simulation.config[i+1, j] if (i < self.grid_size-1) else 0
+        left  = self.simulation.config[i, j-1] if (j > 0) else 0
+        right = self.simulation.config[i, j+1] if (j < self.grid_size-1) else 0
+        num_minority_neighbors = (1 if up == -1 else 0) + \
+                                 (1 if down == -1 else 0) + \
+                                 (1 if left == -1 else 0) + \
+                                 (1 if right == -1 else 0)
+                    
+        return num_minority_neighbors
+    
+    def get_energy_diff_from_swap(self, v_minority, v_majority):
+        """Get the energy change that results from swapping vertices.
+        (assuming that they have opposite spins and aren't adjacent)
+        """
+        n_m = self.get_num_minority_neighbors(v_minority)
+        n_M = self.get_num_minority_neighbors(v_majority)
+        return n_M - n_m
+    
+    def get_total_energy(self):
+        """Get the energy of the entire configuration."""
+        E = 0
+        for i in range(self.grid_size):
+            for j in range(self.grid_size):
+                spin = self.simulation.config[i, j]
+                if spin == -1:
+                    E += self.get_num_minority_neighbors((i, j)) / 2
+                # / 2 necessary since each edge is counted twice
+        return E
+    
+    def get_energy_scale_factor(self):
+        # gamma energy already scales linearly with edge count
+        return 1
+'''

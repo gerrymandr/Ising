@@ -176,7 +176,7 @@ def generate_energy_seats_curve_animation(data, num_districts,
         'get_points': get_comparison_line_points,
         'label': 'Proportional Representation'
     }
-    
+
     return generate_animation(e_info, s_info, p_info,
                               comparison_line_info, None,
                               'Energy-Seats Curves at Varied Minority Proportion Levels',
@@ -256,7 +256,3 @@ def generate_votes_seats_curve_animation(data, num_districts,
                               comparison_line_info, best_fit_line_info,
                               'Votes-Seats Curves at Varied Energy Levels',
                               duration, outfile)
-
-#anim = generate_energy_seats_curve_animation(points2, 6, [0, 1], [0, 4], 10.0) 
-anim = generate_votes_seats_curve_animation(points2, 6, [0, 0.5], [0, 3.5],
-                                            [0, 1], 0.05, 100, 5.0)
