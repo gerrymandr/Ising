@@ -69,7 +69,7 @@ class IsingSimulation:
         n^2*p random nodes are assigned to -1 and the rest to 1.
         """
         C = np.ones(self.num_vertices)
-        C[1:self.num_minority_vertices] = -1
+        C[0:self.num_minority_vertices] = -1
         np.random.shuffle(C)
         self.config = C.reshape((self.grid_size, self.grid_size))
         self.energy = self.energy_calculator.get_total_energy()
