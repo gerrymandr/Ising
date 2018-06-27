@@ -37,14 +37,14 @@ map = {node.id(): node for node in nodes}
 
 # Build a spatial index
 index = QgsSpatialIndex()
-for node in nodes():
+for node in node():
     index.insertFeature(node)
 
 # create a new memory layer
 v_layer = QgsVectorLayer("LineString", ADJ_LAYER_NAME, "memory")
 pr = v_layer.dataProvider()
-for node in nodes.values():
-    Feature_List.append(int(nodes[_NAME_FIELD]))
+for node in node.values():
+    Feature_List.append(int(node[_NAME_FIELD]))
     geom = nodes.geometry()
     rad = numpy.sqrt(geom.area())/5
     start_pt = geom.centroid().asPoint()
