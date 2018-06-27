@@ -116,6 +116,7 @@ def generate_animation(x_info, y_info, t_info, comparison_line_info,
                                    interval=interval, blit=True)
     if outfile != None:
         anim.save(outfile, fps=15, extra_args=['-vcodec', 'libx264'])
+    fig.show()
     return anim
 
 def get_coordinate_info_from_data_tuples(data):
