@@ -1,8 +1,4 @@
-import numpy as np
 import math
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import copy
 import random
 import networkx as nx
 import csv
@@ -32,7 +28,10 @@ def create_square_grid_graph(n, diagonals):
     return G
 
 # create an initial block-layout districting
-def create_block_districting(block_width, block_height, num_blocks_across, num_blocks_down):
+def create_block_districting(block_width,
+                             block_height,
+                             num_blocks_across,
+                             num_blocks_down):
     num_vertices_across = block_width * num_blocks_across
     num_vertices_down = block_height * num_blocks_down
     num_vertices = num_vertices_across ** 2
@@ -106,7 +105,8 @@ def generate_district_ensemble(
     num_districts,
     ensemble_size=10000,
     adjacency_type='rook',
-    unique_districtings=False
+    unique_districtings=False,
+    verbose=False,
 ):
     if adjacency_type not in ['rook', 'queen']:
         raise ValueError('invalid adjacency type')
@@ -122,7 +122,7 @@ def generate_district_ensemble(
     num_G_edges = len(G_edges) # number of edges in the grid graph
     
     current_districting = create_seed_districting(grid_size, num_districts)
-    districtings = [current_districting]
+    districtings = [tuple(current_districting)]
     
     # Find the initial size of each district
     district_sizes = [0] * num_districts
@@ -134,6 +134,9 @@ def generate_district_ensemble(
     G_d = create_district_subgraph(G, current_districting)
     
     while len(districtings) < ensemble_size:
+        # print progress if necessary
+        if verbose:
+            print(len(districtings))
         # search for conflicting edge to swap
         still_searching = True
         while still_searching:
@@ -181,19 +184,12 @@ def generate_district_ensemble(
             update_district_subgraph_after_flip(G, G_d, v_flip, current_districting)
     return set(districtings) if unique_districtings else districtings
 
-ensemble = generate_district_ensemble(
-    grid_size=18,
-    num_districts=6,
-    ensemble_size=100000,
-    adjacency_type='rook',
-    unique_districtings=False
-)
-
-def save_csv(ensemble, file_name):
-    outfile = open(file_name, 'w')
-    writer = csv.writer(outfile, delimiter=',', quoting=csv.QUOTE_NONE)
-    for districting in ensemble:
-        writer.writerow(districting)
-    outfile.close()
-
-save_csv(ensemble, '100000_18_by_18_rook_districtings.csv')
+if __name__ == 'main':
+    ensemble = generate_district_ensemble(
+        grid_size=18,
+        num_districts=6,
+        ensemble_size=100000,
+        adjacency_type='queen',
+        unique_districtings=False
+    )
+    save_csv(ensemble, '100000_18_by_18_queen_districtings.csv')

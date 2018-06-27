@@ -31,9 +31,9 @@ def get_expected_minority_seat_shares(configs, districting_ensemble):
     
     Parameters
     ----------
-    configs : list<numpy.array (grid size x grid size)>
+    configs : list<numpy.array<{-1,1}> (grid size x grid size)>
         list of voter configurations from Ising simulation, -1 minority
-    districting_ensemble: list<numpy.array (1 x num vertices)>
+    districting_ensemble: list<tuple<int> (1 x num vertices)>
         list of generated districting plans, where each is an assigment of
         vertices to district labels
         
@@ -48,7 +48,9 @@ def get_expected_minority_seat_shares(configs, districting_ensemble):
         config = config.flatten()
         expected_seat_share = 0
         for districting in districting_ensemble:
-            expected_seat_share += get_minority_seat_share(config, districting)
+            # convert districting plan tuple into numpy array
+            expected_seat_share += get_minority_seat_share(config,
+                                                           np.array(districting))
         expected_seat_share /= len(districting_ensemble)
-        expected_seat_shares.append(expected_seat_shares)
+        expected_seat_shares.append(expected_seat_share)
     return expected_seat_shares

@@ -165,6 +165,13 @@ def generate_voter_configurations_with_energies(
         # of configurations to sample for each target energy
     num_iterations_between_samples : int
         # of interations to run between samples for each target energy
+        
+    Returns
+    -------
+    configs : list<numpy.array<{-1,1}> (grid_size x grid_size)>
+        list of generated voter configurations
+    energies : list<float>
+        list of corresponding energies, according to energy type
     """
     simulation = IsingSimulation(grid_size,
                                  minority_proportion,
