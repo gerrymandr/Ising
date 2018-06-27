@@ -72,7 +72,7 @@ def k_connected_graph_partitions(G, k):
         if not valid:
             continue
         else: 
-            partitons.append(partition)
+            partitions.append(partition)
     return partitions
             
 # create n x n square grid graph
