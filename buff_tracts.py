@@ -45,7 +45,7 @@ v_layer = QgsVectorLayer("LineString", ADJ_LAYER_NAME, "memory")
 pr = v_layer.dataProvider()
 for node in node.values():
     Feature_List.append(int(node[_NAME_FIELD]))
-    geom = nodes.geometry()
+    geom = node.geometry()
     rad = numpy.sqrt(geom.area())/5
     start_pt = geom.centroid().asPoint()
     # Find all features that intersect the bounding box of the current feature.
@@ -55,7 +55,7 @@ for node in node.values():
     neighbors = index.intersects(geom.buffer(rad,2).boundingBox())
     # Initalize neighbors list and sum
     edges = []
-    for neighbors in neighbors:
+    for neighbor in neighbors:
         # Look up the feature from the dictionary
         intersecting_node = nodes[neighbors]
         intersecting_buff=intersecting_node.geometry().buffer(rad,2)
