@@ -182,3 +182,4 @@ def generate_district_ensemble(
             district_sizes[int(current_districting[v_flip])] += 1
             district_sizes[int(current_districting[v_base])] -= 1
             update_district_subgraph_after_flip(G, G_d, v_flip, current_districting)
+    return set(districtings) if unique_districtings else districtings
