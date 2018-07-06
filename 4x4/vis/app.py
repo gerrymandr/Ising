@@ -16,7 +16,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    graph = get_graph(randint(0, 100)).to_json(orient='values')
     return render_template("index.html")
 
 @app.route('/getgraph')

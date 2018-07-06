@@ -25,6 +25,11 @@
     <!-- Page Content -->
     <div class="container">
       <div class="row">
+        <button onclick="toggleNodes()">Toggle Nodes</button>
+        <button onclick="toggleLinks()">Toggle Links</button>
+
+      </div>
+      <div class="row">
        
           <div class='col-lg-9' id="metagraph">
             <svg id="graphsvg" width="1200" height="1000"></svg>
@@ -46,12 +51,19 @@
     <script> 
  
 
+    var tnode = false;
+    var tlink = false;
+  var degrees = [];
+
 
   var svg = d3.select("#graphsvg"),
       width = +svg.attr("width"),
       height = +svg.attr("height");
 
   var color = d3.scaleOrdinal(d3.schemeCategory20);
+  var timecolor = d3.scaleLinear()
+        .domain([0, 150])
+        .range(["orange","blue"]);
 
   var simulation = d3.forceSimulation()
       .force("link", d3.forceLink().id(function(d) { return d.id; }))
@@ -59,21 +71,29 @@
       .force("center", d3.forceCenter(width / 2, height / 2));
 
   var iter = 0; // controls which grid svg is next to update
+
   $.get("/getmeta", function(graph, err) {
 
     var rows = [...Array(graph.data.length).keys()];
     var nodes = [];
-    rows.forEach(function(row, i){
-      nodes.push({"id":row});
-    });
+   
     var links = [];
-    nodes.forEach(function(d, i) {
+
+    degrees = new Array(graph.data.length).fill(0);
+    rows.forEach(function(d, i) {
       graph.data[i].slice(1).forEach(function(e, j) {
         if(graph.data[i][j] > 0) {
           links.push({source: i, target: j});
+          degrees[i] +=1;
         }
       });
     });
+
+    console.log(degrees);
+    rows.forEach(function(row, i){
+      nodes.push({"id":row});
+    });
+
 
     var link = svg.append("g")
         .attr("class", "links")
@@ -89,7 +109,8 @@
       .selectAll("circle")
       .data(nodes)
       .enter().append("circle")
-        .attr("r", 7)
+        .attr("r", function(d){return Math.pow(degrees[d.id],2)/5})
+        .style("fill", function (d) { return timecolor(d.id);})
         .on("dblclick", function(d){
           showGraph(d.id, iter++%4);
         })
@@ -133,6 +154,28 @@
     if (!d3.event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+  }
+  function toggleNodes(){
+    if(tnode){
+      d3.selectAll("circle").attr("r", function(d){ return Math.pow(degrees[d.id],2)/5;});
+      tnode = false;
+
+      } 
+      else{ 
+        tnode=true;
+        d3.selectAll("circle").attr("r", function(d){ return 0})
+      }
+  }
+  function toggleLinks(){
+    if(tlink){
+      d3.selectAll("line").attr("stroke-width", function(d){ return 1});
+      tlink = false;
+
+      } 
+      else{ 
+        tlink=true;
+        d3.selectAll("line").attr("stroke-width", function(d){ return 0})
+      }
   }
 
     </script>
