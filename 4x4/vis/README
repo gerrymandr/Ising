@@ -4,5 +4,8 @@ pip3 install pandas
 
 `python3 app.py`
 
-Navigate to localhost:8000 in your browser
+Navigate to localhost:8000 in your browser. Double click a node to pull up it's underlying graph. The vis is done with the 117 graph of rook adjacencies under equal population.
+
+
 This must be run on a webserver becuase of D3. Hopefully it helps to allow manipulatability and exploration!
+
