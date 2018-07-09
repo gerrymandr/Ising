@@ -95,36 +95,35 @@ class GammaEnergyCalculator(IsingEnergyCalculator):
     low G -> low minority clustering
     high G -> high minority clustering
     """
+    def __init__(self, ising_simulation):
+        super().__init__(ising_simulation)
 
     def get_num_minority_neighbors(self, x):
         """Get the number of minority (spin -1) neighbors of vertex x = (i, j).
         """
-        num_minority_neighbors = 0
+        num_minority_neighbors= 0
         for nb in self.simulation.graph.neighbors(x):
-            #print(nb, self.simulation.config[nb])
             if -1 == self.simulation.config[nb]:
                 num_minority_neighbors += 1
 
-        #print("num neighbors:", num_minority_neighbors)
         return num_minority_neighbors
 
     def get_energy_diff_from_swap(self, v_minority, v_majority):
         """Get the energy change that results from swapping vertices.
         (assuming that they have opposite spins and aren't adjacent)
         """
-        #print("min:", v_minority)
-        n_m = self.get_num_minority_neighbors(v_minority)
-        n_M = self.get_num_minority_neighbors(v_majority)
+        n_m= self.get_num_minority_neighbors(v_minority)
+        n_M= self.get_num_minority_neighbors(v_majority)
         return n_M - n_m
 
     def get_total_energy(self):
         """Get the energy of the entire configuration."""
-        x = np.array([self.simulation.config])
-        x[x == 1] = 0
-        M = nx.to_numpy_matrix(self.simulation.graph)
-        E = np.matmul(x, np.matmul(M, x.T))/2
+        x= np.array([self.simulation.config])
+        x[x == 1]= 0
+        M= nx.to_numpy_matrix(self.simulation.graph)
+        E= np.matmul(x, np.matmul(M, x.T))/2
 
-        return E[0,0]
+        return E[0, 0]
 
     def get_energy_scale_factor(self):
         # gamma energy already scales linearly with edge count
@@ -135,7 +134,7 @@ class NormalizedGammaEnergyCalculator(GammaEnergyCalculator):
 
     """Energy Calculator for a normalized variant of Gamma Energy
     Gamma*(config) = # edges between minority (-1 spin) vertices /
-                     ~ max # possible for given minority count and grid size 
+                     ~ max # possible for given minority count and grid size
     G ~ 0 -> low minority clustering
     G ~ 1 -> high minority clustering
     """
@@ -144,13 +143,13 @@ class NormalizedGammaEnergyCalculator(GammaEnergyCalculator):
         super().__init__(ising_simulation)
         # our maximum assumes all of the minority vertices are in a square, so
         # this is slight overestimate when minority count isn't perfect square
-        self.max_gamma = self.get_max_gamma()
+        self.max_gamma= self.get_max_gamma()
 
     def get_energy_diff_from_swap(self, v_minority, v_majority):
         """Get the energy change that results from swapping vertices.
         (assuming that they have opposite spins and aren't adjacent)
         """
-        dE = super().get_energy_diff_from_swap(v_minority, v_majority)
+        dE= super().get_energy_diff_from_swap(v_minority, v_majority)
         return dE / self.max_gamma
 
     def get_total_energy(self):
@@ -162,56 +161,8 @@ class NormalizedGammaEnergyCalculator(GammaEnergyCalculator):
         return self.max_gamma
 
     def get_max_gamma(self):
-        #maxeig = np.max(la.eig(nx.to_numpy_matrix(self.simulation.graph))[0])
+        ''' This notion is only for a square grid graph, not easily generalizable'''
         return 2 * math.sqrt(self.simulation.num_minority_vertices)\
-            * (math.sqrt(self.simulation.num_minority_vertices) - 1)#np.real(maxeig) / self.simulation.num_minority_vertices
+            * (math.sqrt(self.simulation.num_minority_vertices) - 1)  
 
 
-'''
-class ConnectionProbabilityEnergyCalculator(IsingEnergyCalculator):
-        
-    """Energy Calculator for our self-named Gamma Energy
-    CP(config) = # minority-minority edges / (total # minority edges)
-    low CP -> low minority clustering
-    high CP -> high minority clustering
-    """
-    
-    def get_neighbor_classifications(self, x):
-        """Get the number of minority and majority neighbors
-        """
-        i = x[0]
-        j = x[1]
-        up    = self.simulation.config[i-1, j] if (i > 0) else 0
-        down  = self.simulation.config[i+1, j] if (i < self.grid_size-1) else 0
-        left  = self.simulation.config[i, j-1] if (j > 0) else 0
-        right = self.simulation.config[i, j+1] if (j < self.grid_size-1) else 0
-        num_minority_neighbors = (1 if up == -1 else 0) + \
-                                 (1 if down == -1 else 0) + \
-                                 (1 if left == -1 else 0) + \
-                                 (1 if right == -1 else 0)
-                    
-        return num_minority_neighbors
-    
-    def get_energy_diff_from_swap(self, v_minority, v_majority):
-        """Get the energy change that results from swapping vertices.
-        (assuming that they have opposite spins and aren't adjacent)
-        """
-        n_m = self.get_num_minority_neighbors(v_minority)
-        n_M = self.get_num_minority_neighbors(v_majority)
-        return n_M - n_m
-    
-    def get_total_energy(self):
-        """Get the energy of the entire configuration."""
-        E = 0
-        for i in range(self.grid_size):
-            for j in range(self.grid_size):
-                spin = self.simulation.config[i, j]
-                if spin == -1:
-                    E += self.get_num_minority_neighbors((i, j)) / 2
-                # / 2 necessary since each edge is counted twice
-        return E
-    
-    def get_energy_scale_factor(self):
-        # gamma energy already scales linearly with edge count
-        return 1
-'''

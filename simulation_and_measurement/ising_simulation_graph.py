@@ -12,10 +12,10 @@ class IsingSimulation:
     
     Attributes
     ----------
-    grid_size : int
-        width/height of grid graph underlying simulation
+    graph : networkx graph
+        graph structure for underling analysis
     num_vertices : int
-        # of vertices in grid graph
+        # of vertices in graph
     minority_proportion : float
         proportion of spin -1 vertices which represent minority group
     num_minority_vertices : int
