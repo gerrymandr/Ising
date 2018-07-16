@@ -38,7 +38,7 @@ class ising:
 			swap = self.accept(new_en, old_en, self.beta)
 		if swap:
 			self.newrepvotes = prop_rep
-			self.newrepvotes = prop_dem
+			self.newdemvotes = prop_dem
 		return self.newrepvotes, self.newdemvotes
 
 	def accept(self, old, new, beta):
