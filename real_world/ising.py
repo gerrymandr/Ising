@@ -32,14 +32,16 @@ class ising:
 		prop_rep, prop_dem = self.proposal(self.newrepvotes, self.newdemvotes)
 		old_en = sparse_capy(self.newrepvotes, self.newdemvotes, self.A)
 		new_en = sparse_capy(prop_rep, prop_dem, self.A)
+		en = old_en
 		if (old_en < self.target):
 			swap = self.accept(old_en, new_en, self.beta)
 		else:
 			swap = self.accept(new_en, old_en, self.beta)
 		if swap:
+			en = new_en
 			self.newrepvotes = prop_rep
 			self.newdemvotes = prop_dem
-		return self.newrepvotes, self.newdemvotes
+		return self.newrepvotes, self.newdemvotes, en
 
 	def accept(self, old, new, beta):
 		'''
