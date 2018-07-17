@@ -43,6 +43,9 @@ class ising:
 			self.newdemvotes = prop_dem
 		return self.newrepvotes, self.newdemvotes, en
 
+	def __len__(self):
+		return self.steps
+
 	def accept(self, old, new, beta):
 		'''
 		metropolis hasting acceptance function for higher energies (i.e. always accept higher)
