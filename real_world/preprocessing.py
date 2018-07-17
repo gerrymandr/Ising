@@ -71,16 +71,3 @@ def get_data(config_file):
 
 	return dual_graph, repvote, demvote, dists, pos, node_size
 
-def draw_state(dual_graph, demvec, repvec, pos, node_size):
-    value_map = []
-    for i in range(dual_graph.number_of_nodes()):
-        if demvec[i] == 0 and repvec[i] == 0:
-            value_map.append(0.5)
-        else:
-            value_map.append((repvec[i]/(demvec[i] + repvec[i])))
-    value_map = np.array(value_map)
-    plt.figure(num=None, figsize=(6, 3), dpi=300, facecolor='w', edgecolor='k')
-
-    nx.draw_networkx(dual_graph, pos=pos, node_size=node_size, with_labels=False, cmap=plt.get_cmap('bwr'), \
-                     node_color=value_map, vmin=0, vmax=1, width=0.1)
-    plt.show()
