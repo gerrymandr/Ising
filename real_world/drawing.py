@@ -33,16 +33,16 @@ def update_func(step, dual_graph, demvec, repvec, nodes):
 	return nodes
 
 def ising_anim(dual_graph, demvecs, repvecs, pos, node_size):
-	fig = plt.figure(num=None, figsize=(6, 3), dpi=300, facecolor='w', edgecolor='k')
-	demvec = demvecs[0]
-	repvec = repvecs[0]
-	value_map = []
-	for i in range(dual_graph.number_of_nodes()):
-		if demvec[i] == 0 and repvec[i] == 0:
-			value_map.append(0.5)
-		else:
-			value_map.append((repvec[i]/(demvec[i] + repvec[i])))
-	value_map = np.array(value_map)
-	nodes = nx.draw_networkx_nodes(dual_graph, pos, node_size=node_size, cmap=plt.get_cmap('bwr'), node_color=value_map, vmin=0, vmax=1, width=0.1)
-    nx.draw_networkx_edges(dual_graph)
-	return animation.FuncAnimation(fig, update_func, frames=range(len(demvecs)), fargs=(dual_graph, demvecs, repvecs, nodes))
+    fig = plt.figure(num=None, figsize=(6, 3), dpi=300, facecolor='w', edgecolor='k')
+    demvec = demvecs[0]
+    repvec = repvecs[0]
+    value_map = []
+    for i in range(dual_graph.number_of_nodes()):
+        if demvec[i] == 0 and repvec[i] == 0:
+            value_map.append(0.5)
+        else:
+            value_map.append((repvec[i]/(demvec[i] + repvec[i])))
+    value_map = np.array(value_map)
+    nodes = nx.draw_networkx_nodes(dual_graph, pos, node_size=node_size, cmap=plt.get_cmap('bwr'), node_color=value_map, vmin=0, vmax=1, width=0.1)
+    nx.draw_networkx_edges(dual_graph, pos, width=0.1)
+    return animation.FuncAnimation(fig, update_func, frames=range(len(demvecs)), fargs=(dual_graph, demvecs, repvecs, nodes))
