@@ -30,6 +30,11 @@
 
       </div>
       <div class="row">
+        <input class="curgraph" type="checkbox" value="4x4rook" checked=checked name="4x4 rook">
+        <input class="curgraph" type="checkbox" value="3x3queen" name="3x3 queen">
+
+      </div>
+      <div class="row">
        
           <div class='col-lg-9' id="metagraph">
             <svg id="graphsvg" width="1200" height="1000"></svg>
@@ -54,13 +59,15 @@
     var tnode = false;
     var tlink = false;
   var degrees = [];
+  var curgraph = $('.curgraph:checked').val();
+
 
 
   var svg = d3.select("#graphsvg"),
       width = +svg.attr("width"),
       height = +svg.attr("height");
 
-  var color = d3.scaleOrdinal(d3.schemeCategory20);
+  var color = d3.scaleOrdinal(d3.schemeCategory10);
   var timecolor = d3.scaleLinear()
         .domain([0, 150])
         .range(["orange","blue"]);
@@ -72,7 +79,7 @@
 
   var iter = 0; // controls which grid svg is next to update
 
-  $.get("/getmeta", function(graph, err) {
+  $.get("/getmeta?curgraph="+curgraph, function(graph, err) {
 
     var rows = [...Array(graph.data.length).keys()];
     var nodes = [];
