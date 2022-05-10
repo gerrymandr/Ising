@@ -1,8 +1,0 @@
-
-pip3 install flask
-pip3 install pandas
-
-`python3 app.py`
-
-Navigate to localhost:8000 in your browser
-This must be run on a webserver becuase of D3. Hopefully it helps to allow manipulatability and exploration!
